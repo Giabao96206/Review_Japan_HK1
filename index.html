@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f7f6f2">
+<title>TNCS2 · Ôn tập giữa kỳ</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --canvas: light-dark(#f7f6f2, #0b1020);
+  --surface: light-dark(#ffffff, #151c2f);
+  --surface-soft: light-dark(#f0eee8, #1b2438);
+  --surface-tint: light-dark(#f5f1ff, #24203b);
+  --text: light-dark(#182033, #f1f4fb);
+  --muted: light-dark(#687084, #a1abc2);
+  --border: light-dark(#e4e2dc, #303950);
+  --accent: light-dark(#7057d9, #a89aff);
+  --accent-strong: light-dark(#5840c3, #bcafff);
+  --accent-ink: light-dark(#fff, #191329);
+  --coral: light-dark(#f47c62, #ff9a80);
+  --mint: light-dark(#168e76, #58d1b6);
+  --shadow: 0 18px 50px light-dark(#242a3a12, #00000038);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--canvas); color: var(--text); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
+a { color: inherit; }
+#app { min-height: 100vh; width: 100%; border-radius: 0; background-color: var(--canvas); overflow: hidden; }
+.shell { width: min(1160px, calc(100% - 40px)); margin: 0 auto; }
+.topbar { border-bottom: 1px solid var(--border); background: light-dark(#ffffffc7, #101629e8); backdrop-filter: blur(18px); }
+.topbar-inner { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 800; letter-spacing: -.03em; }
+.brand-mark { width: 40px; height: 40px; border-radius: 14px; display: grid; place-items: center; color: white; background: linear-gradient(140deg, #8269e7, #5140b8); box-shadow: 0 8px 18px #7057d933; font-size: 18px; }
+.brand small { display: block; font-size: 10px; color: var(--muted); font-weight: 750; letter-spacing: .14em; margin-top: 3px; }
+.top-nav { display: flex; align-items: center; gap: 8px; }
+.nav-btn { border: 0; background: transparent; color: var(--muted); font-weight: 700; padding: 11px 15px; border-radius: 999px; }
+.nav-btn:hover { background: var(--surface-soft); color: var(--text); }
+.nav-btn.primary { background: var(--text); color: var(--canvas); }
+.hero { padding: 52px 0 28px; position: relative; }
+.hero::before { content: ""; position: absolute; width: 430px; height: 430px; right: -85px; top: -190px; pointer-events: none; background: radial-gradient(circle, light-dark(#d7cbff80, #6f5dda35), transparent 68%); }
+.hero-grid { display: grid; grid-template-columns: 1.3fr .7fr; align-items: center; gap: 46px; position: relative; }
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--accent); font-size: 12px; font-weight: 850; text-transform: uppercase; letter-spacing: .14em; margin-bottom: 16px; }
+.eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--coral); box-shadow: 0 0 0 5px light-dark(#f47c621f, #ff9a8020); }
+h1 { margin: 0; font-size: clamp(36px, 5.7vw, 67px); line-height: .99; letter-spacing: -.065em; max-width: 720px; }
+.gradient-text { color: var(--accent); }
+.hero-copy { color: var(--muted); font-size: 16px; line-height: 1.75; max-width: 590px; margin: 22px 0 25px; }
+.japanese-line { color: var(--text); font-size: 14px; font-weight: 750; letter-spacing: .04em; }
+.hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.btn { border: 1px solid var(--border); border-radius: 14px; min-height: 45px; padding: 0 17px; background: var(--surface); color: var(--text); font-weight: 750; transition: transform .15s ease, box-shadow .15s ease, background .15s ease; }
+.btn:hover { transform: translateY(-1px); box-shadow: 0 8px 16px #1b203a12; }
+.btn.accent { background: var(--accent); color: white; border-color: transparent; }
+.btn.dark { background: var(--text); color: var(--canvas); border-color: transparent; }
+.btn.small { min-height: 36px; padding: 0 12px; border-radius: 11px; font-size: 13px; }
+.btn.ghost { background: transparent; }
+.btn:disabled { opacity: .42; cursor: not-allowed; transform: none; box-shadow: none; }
+.hero-visual { min-height: 305px; border-radius: 30px; padding: 24px; position: relative; overflow: hidden; background: linear-gradient(145deg, light-dark(#e8e1ff, #2a2450), light-dark(#faf1e7, #202a41)); border: 1px solid light-dark(#e4dcff, #353255); box-shadow: var(--shadow); }
+.hero-visual::after { content: "漢"; position: absolute; right: -11px; bottom: -57px; font-family: "Yu Mincho", "Hiragino Mincho ProN", serif; font-size: 220px; font-weight: 900; line-height: 1; color: light-dark(#7459db12, #c7bbff12); transform: rotate(-8deg); }
+.visual-top { display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1; }
+.pill { display: inline-flex; align-items: center; gap: 7px; border-radius: 999px; background: light-dark(#ffffffa8, #11172bad); padding: 7px 10px; font-size: 11px; font-weight: 800; color: var(--muted); }
+.mini-spark { color: var(--coral); font-size: 20px; }
+.study-card-mini { position: relative; z-index: 1; margin-top: 27px; padding: 20px; border-radius: 20px; background: light-dark(#ffffffdd, #12182bdf); border: 1px solid light-dark(#ffffff, #39415b); box-shadow: 0 12px 28px #231b4517; transform: rotate(-2deg); }
+.mini-label { font-size: 10px; letter-spacing: .13em; font-weight: 850; color: var(--accent); text-transform: uppercase; }
+.mini-kanji { font-family: "Yu Mincho", "Hiragino Mincho ProN", serif; font-size: 56px; font-weight: 800; line-height: 1.2; margin: 10px 0 2px; }
+.mini-reading { color: var(--muted); font-size: 13px; }
+.mini-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 15px; margin-top: 17px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); }
+.hero-units { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 26px; }
+.unit-chip { border: 1px solid var(--border); border-radius: 999px; background: var(--surface); padding: 9px 14px; font-size: 12px; font-weight: 800; color: var(--muted); }
+.unit-chip.active, .unit-chip:hover { background: var(--surface-tint); border-color: light-dark(#c5b8ff, #5c4c99); color: var(--accent); }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 13px; margin: 22px 0 48px; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 19px 20px; }
+.stat-head { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 12px; font-weight: 750; gap: 8px; }
+.stat-icon { width: 32px; height: 32px; display: grid; place-items: center; background: var(--surface-soft); border-radius: 11px; }
+.stat-number { font-size: 28px; font-weight: 850; letter-spacing: -.05em; margin-top: 13px; }
+.stat-note { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.section-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin: 44px 0 18px; }
+.kicker { color: var(--accent); text-transform: uppercase; letter-spacing: .14em; font-size: 11px; font-weight: 850; }
+h2 { font-size: clamp(24px, 3.4vw, 35px); letter-spacing: -.045em; margin: 7px 0 0; }
+.section-lead { color: var(--muted); margin: 9px 0 0; font-size: 14px; line-height: 1.6; }
+.units-grid { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 13px; }
+.unit-card { text-align: left; border: 1px solid var(--border); background: var(--surface); border-radius: 21px; padding: 17px; min-height: 170px; position: relative; overflow: hidden; transition: transform .18s, border .18s, box-shadow .18s; color: var(--text); }
+.unit-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.unit-card.active { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent), 0 8px 26px light-dark(#7057d919, #00000020); background: var(--surface-tint); }
+.unit-card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.unit-number { width: 39px; height: 39px; display: grid; place-items: center; border-radius: 13px; background: var(--surface-soft); font-size: 13px; font-weight: 900; }
+.unit-card.active .unit-number { background: var(--accent); color: #fff; }
+.unit-total { color: var(--muted); font-size: 11px; font-weight: 800; }
+.unit-card h3 { margin: 16px 0 5px; font-size: 17px; letter-spacing: -.03em; }
+.unit-card p { margin: 0; color: var(--muted); font-size: 12px; }
+.unit-mini-bars { display: grid; grid-template-columns: repeat(4,1fr); gap: 4px; margin-top: 17px; }
+.unit-mini-bars span { height: 4px; border-radius: 9px; background: var(--border); }
+.unit-mini-bars span:nth-child(1) { background: #8d78ed; }
+.unit-mini-bars span:nth-child(2) { background: #f47c62; }
+.unit-mini-bars span:nth-child(3) { background: #35bda0; }
+.unit-mini-bars span:nth-child(4) { background: #e0b352; }
+.workspace { margin-top: 56px; padding: 28px; border: 1px solid var(--border); border-radius: 28px; background: var(--surface); box-shadow: var(--shadow); }
+.workspace-head { display: flex; justify-content: space-between; gap: 24px; align-items: start; }
+.workspace-title { display: flex; gap: 13px; align-items: center; }
+.category-mark { width: 46px; height: 46px; border-radius: 15px; background: var(--surface-tint); color: var(--accent); display: grid; place-items: center; font-size: 18px; font-weight: 900; }
+.workspace h2 { margin: 0; font-size: 27px; }
+.workspace-note { color: var(--muted); font-size: 13px; margin-top: 6px; }
+.mode-switch { display: flex; gap: 4px; background: var(--surface-soft); padding: 4px; border-radius: 13px; flex-shrink: 0; }
+.mode-btn { border: 0; border-radius: 10px; padding: 9px 12px; background: transparent; color: var(--muted); font-size: 12px; font-weight: 800; }
+.mode-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 2px 7px #1418290d; }
+.category-tabs { display: grid; grid-template-columns: repeat(4,1fr); gap: 9px; margin: 26px 0 18px; }
+.category-tab { display: flex; align-items: center; gap: 10px; text-align: left; border: 1px solid var(--border); background: transparent; color: var(--text); border-radius: 15px; padding: 13px 14px; min-width: 0; }
+.category-tab:hover { background: var(--surface-soft); }
+.category-tab.active { background: var(--surface-tint); border-color: light-dark(#c7baff, #5b4d99); }
+.tab-symbol { font-weight: 900; color: var(--accent); font-size: 16px; min-width: 21px; text-align: center; }
+.tab-title { font-size: 13px; font-weight: 850; white-space: nowrap; }
+.tab-sub { display: block; color: var(--muted); font-size: 10px; margin-top: 3px; }
+.tab-count { margin-left: auto; border-radius: 8px; padding: 4px 6px; background: var(--surface-soft); color: var(--muted); font-size: 10px; font-weight: 850; }
+.filters { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.filters .unit-chip { padding: 7px 11px; font-size: 11px; }
+.search-wrap { position: relative; flex: 1; min-width: 210px; }
+.search-wrap span { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+.search-input { width: 100%; border-radius: 12px; border: 1px solid var(--border); background: var(--canvas); color: var(--text); min-height: 41px; padding: 0 13px 0 37px; }
+.search-input::placeholder { color: var(--muted); }
+.filter-meta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding: 14px 0 8px; font-size: 12px; color: var(--muted); }
+.filter-meta strong { color: var(--text); }
+.external-link { color: var(--accent); text-decoration: none; font-weight: 800; }
+.external-link:hover { text-decoration: underline; }
+.study-layout { display: grid; grid-template-columns: minmax(0,1fr) 245px; gap: 17px; align-items: stretch; margin-top: 13px; }
+.flashcard-wrap { min-width: 0; }
+.flashcard { min-height: 340px; border-radius: 23px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(135deg, var(--surface-tint), var(--surface)); border: 1px solid light-dark(#ded5ff, #393254); padding: clamp(20px,4vw,34px); }
+.flashcard::before { content: ""; position: absolute; width: 220px; height: 220px; border-radius: 50%; border: 1px solid light-dark(#b6a8ff59, #9b89e72b); right: -80px; top: -85px; box-shadow: 0 0 0 22px light-dark(#b6a8ff0d, #9b89e70b), 0 0 0 44px light-dark(#b6a8ff0a, #9b89e706); }
+.flash-top, .flash-bottom, .flash-main { position: relative; z-index: 1; }
+.flash-top { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.flash-label { font-size: 10px; text-transform: uppercase; letter-spacing: .15em; color: var(--accent); font-weight: 900; }
+.flash-count { color: var(--muted); font-size: 12px; font-weight: 800; }
+.flash-main { padding: 30px 0 22px; }
+.flash-term { font-size: clamp(29px,5vw,47px); line-height: 1.2; letter-spacing: -.045em; overflow-wrap: anywhere; }
+.flash-reading { margin-top: 9px; color: var(--muted); font-size: 14px; }
+.flash-hint { margin-top: 17px; color: var(--muted); font-size: 12px; }
+.flash-answer { border-top: 1px solid var(--border); padding-top: 17px; margin-top: 23px; animation: rise .18s ease; }
+@keyframes rise { from { transform: translateY(5px); opacity: .5; } to { transform: translateY(0); opacity: 1; } }
+.answer-label { color: var(--mint); text-transform: uppercase; font-weight: 850; letter-spacing: .12em; font-size: 10px; }
+.flash-meaning { font-size: 19px; line-height: 1.5; font-weight: 800; margin-top: 8px; }
+.example { color: var(--muted); margin-top: 12px; font-size: 13px; line-height: 1.65; }
+.example strong { color: var(--text); }
+.flash-bottom { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-top: 17px; border-top: 1px solid var(--border); }
+.flash-progress { display: flex; align-items: center; gap: 10px; flex: 1; max-width: 220px; }
+.progress-track { height: 5px; border-radius: 9px; background: var(--border); flex: 1; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: inherit; background: var(--accent); transition: width .2s; }
+.flash-controls { display: flex; gap: 7px; flex-wrap: wrap; justify-content: end; }
+.side-panel { border: 1px solid var(--border); border-radius: 21px; padding: 19px; background: var(--surface-soft); display: flex; flex-direction: column; }
+.side-head { font-size: 13px; font-weight: 850; }
+.side-sub { color: var(--muted); font-size: 11px; line-height: 1.6; margin-top: 6px; }
+.mastery-number { font-size: 35px; font-weight: 900; letter-spacing: -.06em; margin-top: 17px; }
+.mastery-number small { color: var(--muted); font-size: 13px; font-weight: 700; letter-spacing: 0; }
+.mastery-track { height: 7px; background: var(--border); overflow: hidden; border-radius: 10px; margin: 8px 0 18px; }
+.mastery-track span { display: block; height: 100%; background: var(--mint); border-radius: inherit; }
+.side-link { margin-top: auto; text-align: left; border: 0; background: transparent; color: var(--accent); font-weight: 850; font-size: 12px; padding: 14px 0 0; }
+.list-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin-top: 13px; }
+.list-item { border: 1px solid var(--border); border-radius: 15px; padding: 15px; background: var(--surface); min-width: 0; }
+.list-top { display: flex; justify-content: space-between; align-items: start; gap: 9px; }
+.list-term { font-size: 20px; font-weight: 850; letter-spacing: -.03em; overflow-wrap: anywhere; }
+.list-reading { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.list-unit { flex-shrink: 0; border-radius: 7px; background: var(--surface-soft); color: var(--muted); padding: 4px 6px; font-size: 10px; font-weight: 850; }
+.list-answer { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--border); color: var(--text); font-size: 13px; line-height: 1.6; }
+.list-answer.hidden { color: var(--muted); font-style: italic; }
+.list-example { color: var(--muted); margin-top: 8px; font-size: 12px; line-height: 1.6; }
+.empty { padding: 48px 20px; text-align: center; border: 1px dashed var(--border); border-radius: 19px; color: var(--muted); margin-top: 15px; }
+.empty strong { display: block; color: var(--text); margin-bottom: 8px; }
+.quiz-box { margin-top: 17px; border: 1px solid var(--border); border-radius: 22px; background: linear-gradient(140deg, var(--surface-tint), var(--surface)); padding: clamp(20px,4vw,32px); }
+.quiz-top { display: flex; justify-content: space-between; align-items: center; gap: 15px; }
+.quiz-kicker { text-transform: uppercase; letter-spacing: .13em; color: var(--accent); font-size: 10px; font-weight: 900; }
+.quiz-progress-text { font-size: 12px; color: var(--muted); font-weight: 800; }
+.quiz-prompt { font-size: clamp(24px,4vw,36px); line-height: 1.25; letter-spacing: -.045em; margin: 25px 0 7px; }
+.quiz-hint { color: var(--muted); font-size: 13px; }
+.quiz-options { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin-top: 24px; }
+.quiz-option { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 14px; padding: 15px; text-align: left; min-height: 55px; font-size: 14px; font-weight: 700; line-height: 1.45; }
+.quiz-option:hover:not(:disabled) { border-color: var(--accent); background: var(--surface-tint); }
+.quiz-option.correct { border-color: var(--mint); background: light-dark(#e6f7f1, #153a35); }
+.quiz-option.wrong { border-color: var(--coral); background: light-dark(#fff0ec, #452722); }
+.quiz-feedback { min-height: 26px; font-size: 13px; font-weight: 750; margin-top: 17px; }
+.quiz-feedback.good { color: var(--mint); }
+.quiz-feedback.bad { color: var(--coral); }
+.quiz-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+.quiz-result { text-align: center; padding: 32px 15px; }
+.result-score { font-size: clamp(54px,10vw,85px); letter-spacing: -.07em; font-weight: 900; margin: 14px 0; }
+.result-message { color: var(--muted); line-height: 1.7; margin: 0 auto 22px; max-width: 440px; }
+.bottom-banner { display: flex; justify-content: space-between; gap: 20px; align-items: center; background: light-dark(#eee8ff, #201b39); border: 1px solid light-dark(#e0d7ff, #393052); border-radius: 22px; padding: 22px 25px; margin: 36px 0 50px; }
+.bottom-banner h3 { margin: 0; font-size: 19px; letter-spacing: -.03em; }
+.bottom-banner p { margin: 6px 0 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.footer { border-top: 1px solid var(--border); color: var(--muted); font-size: 11px; padding: 25px 0 30px; display: flex; justify-content: space-between; gap: 15px; flex-wrap: wrap; }
+.toast { position: fixed; bottom: 20px; left: 50%; transform: translate(-50%, 20px); background: var(--text); color: var(--canvas); padding: 12px 17px; border-radius: 13px; box-shadow: var(--shadow); opacity: 0; pointer-events: none; transition: .2s; z-index: 20; font-size: 13px; font-weight: 750; }
+.toast.show { opacity: 1; transform: translate(-50%,0); }
+.hidden-pane { display: none !important; }
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: 1fr .7fr; gap: 24px; }
+  .hero-visual { min-height: 270px; padding: 17px; }
+  .stats { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .units-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .workspace { padding: 21px; }
+  .study-layout { grid-template-columns: 1fr; }
+  .side-panel { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 5px 20px; }
+  .side-panel .mastery-number { margin-top: 0; grid-column: 2; grid-row: 1 / span 2; }
+  .side-panel .mastery-track { grid-column: 1 / -1; margin-bottom: 4px; }
+  .side-panel .side-link { grid-column: 1 / -1; margin-top: 0; }
+}
+@media (max-width: 650px) {
+  .shell { width: min(100% - 26px, 560px); }
+  .topbar-inner { min-height: 66px; }
+  .brand { font-size: 13px; }
+  .brand-mark { width: 35px; height: 35px; border-radius: 12px; }
+  .top-nav { gap: 3px; }
+  .nav-btn { padding: 9px 10px; font-size: 11px; }
+  .hero { padding-top: 35px; }
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-visual { display: none; }
+  .hero-copy { font-size: 14px; }
+  .stats { gap: 9px; margin-bottom: 35px; }
+  .stat { padding: 14px; border-radius: 15px; }
+  .stat-number { font-size: 25px; }
+  .units-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; }
+  .unit-card { min-height: 150px; padding: 14px; }
+  .section-head { align-items: start; flex-direction: column; gap: 12px; margin-top: 35px; }
+  .workspace { margin-top: 38px; padding: 15px; border-radius: 22px; }
+  .workspace-head { flex-direction: column; }
+  .workspace h2 { font-size: 24px; }
+  .mode-switch { width: 100%; }
+  .mode-btn { flex: 1; }
+  .category-tabs { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; margin-top: 20px; }
+  .category-tab { padding: 11px 10px; gap: 7px; }
+  .tab-title { font-size: 12px; }
+  .tab-count { font-size: 9px; }
+  .filters { gap: 6px; }
+  .search-wrap { order: -1; flex-basis: 100%; }
+  .flashcard { min-height: 360px; padding: 20px; }
+  .flash-bottom { align-items: start; flex-direction: column; }
+  .flash-progress { width: 100%; max-width: none; }
+  .flash-controls { width: 100%; justify-content: space-between; }
+  .flash-controls .btn { flex: 1; }
+  .list-grid { grid-template-columns: 1fr; }
+  .quiz-options { grid-template-columns: 1fr; }
+  .bottom-banner { align-items: start; flex-direction: column; padding: 20px; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="#top" aria-label="TNCS2 trang chủ">
+        <span class="brand-mark">学</span>
+        <span>TNCS2 <small>MIDTERM REVIEW</small></span>
+      </a>
+      <nav class="top-nav" aria-label="Điều hướng chính">
+        <button class="nav-btn" id="nav-units">Các Unit</button>
+        <button class="nav-btn" id="nav-study">Ôn tập</button>
+        <button class="nav-btn primary" id="nav-quiz">Luyện đề ↗</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top" class="shell">
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow"><span class="dot"></span> Bộ ôn tập giữa kỳ · Unit 13–17</div>
+          <h1>Học chắc từng phần.<br><span class="gradient-text">Vào thi tự tin.</span></h1>
+          <p class="hero-copy">Một nơi để hệ thống lại toàn bộ kiến thức tiếng Nhật giữa kỳ: từ vựng, ngữ pháp, Kanji và từ vựng chuyên ngành SE. Chọn Unit, tự kiểm tra trí nhớ rồi luyện đề ngay trên trang.</p>
+          <div class="japanese-line">文法　·　語彙　·　漢字　·　SE専門語彙</div>
+          <div class="hero-actions">
+            <button class="btn accent" id="start-study">Bắt đầu ôn tập <span aria-hidden="true">→</span></button>
+            <button class="btn ghost" id="start-quiz">Làm bài kiểm tra nhanh</button>
+          </div>
+          <div class="hero-units" id="hero-units"></div>
+        </div>
+        <aside class="hero-visual" aria-label="Thẻ học mẫu">
+          <div class="visual-top"><span class="pill">✦ HỌC THEO NHỊP CỦA BẠN</span><span class="mini-spark">✳</span></div>
+          <div class="study-card-mini">
+            <div class="mini-label">KANJI / UNIT 13</div>
+            <div class="mini-kanji">準備</div>
+            <div class="mini-reading">じゅんび · chuẩn bị</div>
+            <div class="mini-bottom"><span>Nhớ từ vựng qua liên tưởng</span><strong>01 / 89</strong></div>
+          </div>
+        </aside>
+      </div>
+      <div class="stats" id="stats"></div>
+    </section>
+
+    <section id="units-section">
+      <div class="section-head">
+        <div><div class="kicker">01 / Chọn phạm vi</div><h2>Ôn theo từng Unit</h2><p class="section-lead">Chạm vào Unit cần học. Mọi nhóm kiến thức bên dưới sẽ tự lọc theo lựa chọn của bạn.</p></div>
+        <button class="btn small ghost" id="all-units">Xem tất cả Unit ↗</button>
+      </div>
+      <div class="units-grid" id="units-grid"></div>
+    </section>
+
+    <section id="workspace" class="workspace">
+      <div class="workspace-head">
+        <div class="workspace-title">
+          <div class="category-mark" id="workspace-mark">語彙</div>
+          <div><h2 id="workspace-heading">Từ vựng</h2><div class="workspace-note" id="workspace-description">Ghi nhớ từ, cách đọc và nghĩa tiếng Việt.</div></div>
+        </div>
+        <div class="mode-switch" aria-label="Chế độ học">
+          <button class="mode-btn active" data-mode="study">Thẻ ghi nhớ</button>
+          <button class="mode-btn" data-mode="list">Danh sách</button>
+          <button class="mode-btn" data-mode="quiz">Trắc nghiệm</button>
+        </div>
+      </div>
+
+      <div class="category-tabs" id="category-tabs"></div>
+      <div class="filters" id="filters">
+        <button class="unit-chip active" data-unit="all">Tất cả Unit</button>
+        <button class="unit-chip" data-unit="13">Unit 13</button>
+        <button class="unit-chip" data-unit="14">Unit 14</button>
+        <button class="unit-chip" data-unit="15">Unit 15</button>
+        <button class="unit-chip" data-unit="16">Unit 16</button>
+        <button class="unit-chip" data-unit="17">Unit 17</button>
+        <label class="search-wrap"><span aria-hidden="true">⌕</span><input class="search-input" id="search" type="search" placeholder="Tìm từ, cách đọc, nghĩa tiếng Việt…" autocomplete="off"></label>
+      </div>
+      <div class="filter-meta"><span id="record-count">Đang hiển thị <strong>94</strong> mục</span><a class="external-link" id="quizlet-link" href="#" target="_blank" rel="noopener noreferrer" hidden>Mở Quizlet Unit ↗</a></div>
+
+      <div id="study-pane">
+        <div id="study-content"></div>
+      </div>
+      <div id="list-pane" class="hidden-pane">
+        <div class="filter-meta" style="border:0;padding-top:0"><span>Đáp án hiện đang <strong id="answer-toggle-label">ẩn</strong></span><button class="btn small" id="toggle-list-answers">Hiện đáp án</button></div>
+        <div class="list-grid" id="list-content"></div>
+      </div>
+      <div id="quiz-pane" class="hidden-pane">
+        <div class="quiz-box" id="quiz-content"></div>
+      </div>
+    </section>
+
+    <section class="bottom-banner">
+      <div><h3>Ôn có chiến lược, không học dàn trải.</h3><p>Gợi ý: chọn từng Unit → lật thẻ đến khi nhớ → chuyển sang danh sách để rà soát → làm trắc nghiệm để kiểm tra lại.</p></div>
+      <button class="btn accent" id="banner-quiz">Thử sức ngay →</button>
+    </section>
+  </main>
+  <footer class="shell footer"><span>TNCS2 · 中間テスト復習内容 · Unit 13–17</span><span>Nội dung được tổ chức từ file ôn tập đã cung cấp.</span></footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+const DATA = {"units":[13,14,15,16,17],"sections":{"vocab":[{"id":"vocab-13-1","unit":13,"term":"歯","reading":"は","meaning":"răng"},{"id":"vocab-13-2","unit":13,"term":"磨きます","reading":"みがきます","meaning":"đánh (răng), chà"},{"id":"vocab-13-3","unit":13,"term":"シャワーを浴びます","reading":"シャワーをあびます","meaning":"tắm (vòi hoa sen)"},{"id":"vocab-13-4","unit":13,"term":"もう一度","reading":"もういちど","meaning":"một lần nữa"},{"id":"vocab-13-5","unit":13,"term":"～時間目","reading":"～じかんめ","meaning":"tiết ~"},{"id":"vocab-13-6","unit":13,"term":"明るい","reading":"あかるい","meaning":"sáng"},{"id":"vocab-13-7","unit":13,"term":"もう","reading":"もう","meaning":"rồi"},{"id":"vocab-13-8","unit":13,"term":"暗い","reading":"くらい","meaning":"tối"},{"id":"vocab-13-9","unit":13,"term":"怖い","reading":"こわい","meaning":"sợ"},{"id":"vocab-13-10","unit":13,"term":"うがいをします","reading":"うがいをします","meaning":"súc miệng"},{"id":"vocab-13-11","unit":13,"term":"実験をします","reading":"じっけんをします","meaning":"làm thí nghiệm"},{"id":"vocab-13-12","unit":13,"term":"発表","reading":"はっぴょう","meaning":"phát biểu"},{"id":"vocab-13-13","unit":13,"term":"準備をします","reading":"じゅんびをします","meaning":"chuẩn bị"},{"id":"vocab-13-14","unit":13,"term":"徹夜します","reading":"てつやします","meaning":"thức đêm"},{"id":"vocab-13-15","unit":13,"term":"着きます","reading":"つきます","meaning":"đến"},{"id":"vocab-13-16","unit":13,"term":"そんなとき","reading":"そんなとき","meaning":"những lúc như thế"},{"id":"vocab-14-17","unit":14,"term":"趣味","reading":"しゅみ","meaning":"sở thích"},{"id":"vocab-14-18","unit":14,"term":"Jポップ","reading":"Jポップ","meaning":"J-pop"},{"id":"vocab-14-19","unit":14,"term":"始めます","reading":"はじめます","meaning":"bắt đầu"},{"id":"vocab-14-20","unit":14,"term":"生のN","reading":"なまのN","meaning":"N tươi, sống"},{"id":"vocab-14-21","unit":14,"term":"モーツァルト","reading":"モーツァルト","meaning":"Mozart"},{"id":"vocab-14-22","unit":14,"term":"習っています","reading":"ならっています","meaning":"học"},{"id":"vocab-14-23","unit":14,"term":"バンド","reading":"バンド","meaning":"ban nhạc"},{"id":"vocab-14-24","unit":14,"term":"ベース","reading":"ベース","meaning":"bass"},{"id":"vocab-14-25","unit":14,"term":"（ピアノを）ひきます","reading":"（ピアノを）ひきます","meaning":"chơi (piano)"},{"id":"vocab-14-26","unit":14,"term":"曲","reading":"きょく","meaning":"bản nhạc"},{"id":"vocab-14-27","unit":14,"term":"演奏します","reading":"えんそうします","meaning":"diễn, biểu diễn"},{"id":"vocab-15-28","unit":15,"term":"専門","reading":"せんもん","meaning":"chuyên môn"},{"id":"vocab-15-29","unit":15,"term":"情報工学","reading":"じょうほうこうがく","meaning":"công nghệ thông tin"},{"id":"vocab-15-30","unit":15,"term":"卒業します","reading":"そつぎょうします","meaning":"tốt nghiệp"},{"id":"vocab-15-31","unit":15,"term":"進みます","reading":"すすみます","meaning":"tiến lên, học tiếp"},{"id":"vocab-15-32","unit":15,"term":"将来","reading":"しょうらい","meaning":"tương lai"},{"id":"vocab-15-33","unit":15,"term":"情報通信","reading":"じょうほうつうしん","meaning":"truyền thông thông tin"},{"id":"vocab-15-34","unit":15,"term":"博士課程","reading":"はくしかてい","meaning":"khóa học tiến sĩ"},{"id":"vocab-15-35","unit":15,"term":"博士号","reading":"はくしごう","meaning":"bằng tiến sĩ"},{"id":"vocab-15-36","unit":15,"term":"なります","reading":"なります","meaning":"trở thành"},{"id":"vocab-15-37","unit":15,"term":"就職します","reading":"しゅうしょくします","meaning":"tìm việc, đi làm"},{"id":"vocab-15-38","unit":15,"term":"決めます","reading":"きめます","meaning":"quyết định"},{"id":"vocab-15-39","unit":15,"term":"関係","reading":"かんけい","meaning":"quan hệ, liên quan"},{"id":"vocab-15-40","unit":15,"term":"エンターテインメント","reading":"エンターテインメント","meaning":"giải trí"},{"id":"vocab-15-41","unit":15,"term":"あらわれます","reading":"あらわれます","meaning":"xuất hiện"},{"id":"vocab-15-42","unit":15,"term":"たぶん","reading":"たぶん","meaning":"có lẽ"},{"id":"vocab-15-43","unit":15,"term":"続けます","reading":"つづけます","meaning":"tiếp tục"},{"id":"vocab-15-44","unit":15,"term":"システム工学","reading":"システムこうがく","meaning":"kỹ thuật hệ thống"},{"id":"vocab-15-45","unit":15,"term":"言語理解","reading":"げんごりかい","meaning":"hiểu ngôn ngữ"},{"id":"vocab-15-46","unit":15,"term":"人間","reading":"にんげん","meaning":"con người"},{"id":"vocab-15-47","unit":15,"term":"コミュニケーション","reading":"コミュニケーション","meaning":"giao tiếp"},{"id":"vocab-15-48","unit":15,"term":"ロボット","reading":"ロボット","meaning":"robot"},{"id":"vocab-15-49","unit":15,"term":"進学します","reading":"しんがくします","meaning":"học lên cao"},{"id":"vocab-15-50","unit":15,"term":"相手","reading":"あいて","meaning":"đối phương"},{"id":"vocab-15-51","unit":15,"term":"女性","reading":"じょせい","meaning":"phụ nữ"},{"id":"vocab-15-52","unit":15,"term":"家事","reading":"かじ","meaning":"việc nhà"},{"id":"vocab-15-53","unit":15,"term":"育児","reading":"いくじ","meaning":"nuôi dạy con"},{"id":"vocab-16-54","unit":16,"term":"～系","reading":"～けい","meaning":"gốc ~"},{"id":"vocab-16-55","unit":16,"term":"漢字","reading":"かんじ","meaning":"Hán tự"},{"id":"vocab-16-56","unit":16,"term":"意味","reading":"いみ","meaning":"ý nghĩa"},{"id":"vocab-16-57","unit":16,"term":"だいたい","reading":"だいたい","meaning":"hầu hết"},{"id":"vocab-16-58","unit":16,"term":"うまい","reading":"うまい","meaning":"làm gì tốt / ngon"},{"id":"vocab-16-59","unit":16,"term":"ヘルシーな","reading":"ヘルシーな","meaning":"tốt cho sức khoẻ"},{"id":"vocab-16-60","unit":16,"term":"天ぷら","reading":"てんぷら","meaning":"Tempura"},{"id":"vocab-16-61","unit":16,"term":"お好み焼き","reading":"おこのみやき","meaning":"Okonomiyaki"},{"id":"vocab-16-62","unit":16,"term":"たこ焼き","reading":"たこやき","meaning":"Takoyaki"},{"id":"vocab-16-63","unit":16,"term":"なんでも","reading":"なんでも","meaning":"cái gì cũng"},{"id":"vocab-16-64","unit":16,"term":"納豆","reading":"なっとう","meaning":"đậu len men, natto"},{"id":"vocab-16-65","unit":16,"term":"におい","reading":"におい","meaning":"mùi"},{"id":"vocab-16-66","unit":16,"term":"ひどい（におい）","reading":"ひどい（におい）","meaning":"ghê, kinh khủng"},{"id":"vocab-16-67","unit":16,"term":"料理をします","reading":"りょうりをします","meaning":"nấu ăn"},{"id":"vocab-16-68","unit":16,"term":"得意な","reading":"とくいな","meaning":"giỏi, ưa thích"},{"id":"vocab-16-69","unit":16,"term":"カレー","reading":"カレー","meaning":"cà ri"},{"id":"vocab-16-70","unit":16,"term":"インド","reading":"インド","meaning":"Ấn Độ"},{"id":"vocab-16-71","unit":16,"term":"タイ","reading":"タイ","meaning":"Thái Lan"},{"id":"vocab-16-72","unit":16,"term":"シンプルな","reading":"シンプルな","meaning":"đơn giản"},{"id":"vocab-16-73","unit":16,"term":"シーフード","reading":"シーフード","meaning":"hải sản"},{"id":"vocab-16-74","unit":16,"term":"トマトソース","reading":"トマトソース","meaning":"sốt cà chua"},{"id":"vocab-17-75","unit":17,"term":"プレゼント","reading":"プレゼント","meaning":"món quà"},{"id":"vocab-17-76","unit":17,"term":"もらいます","reading":"もらいます","meaning":"nhận"},{"id":"vocab-17-77","unit":17,"term":"くれます","reading":"くれます","meaning":"cho tôi/gia đình tôi"},{"id":"vocab-17-78","unit":17,"term":"スカーフ","reading":"スカーフ","meaning":"khăn quàng"},{"id":"vocab-17-79","unit":17,"term":"バッグ","reading":"バッグ","meaning":"túi xách"},{"id":"vocab-17-80","unit":17,"term":"どれも","reading":"どれも","meaning":"mọi thứ, cái nào cũng"},{"id":"vocab-17-81","unit":17,"term":"うれしい","reading":"うれしい","meaning":"vui"},{"id":"vocab-17-82","unit":17,"term":"親戚","reading":"しんせき","meaning":"họ hàng"},{"id":"vocab-17-83","unit":17,"term":"おじさん","reading":"おじさん","meaning":"chú, bác"},{"id":"vocab-17-84","unit":17,"term":"おこづかい","reading":"おこづかい","meaning":"tiền tiêu vặt"},{"id":"vocab-17-85","unit":17,"term":"誕生日","reading":"たんじょうび","meaning":"sinh nhật"},{"id":"vocab-17-86","unit":17,"term":"ベルト","reading":"ベルト","meaning":"dây nịt"},{"id":"vocab-17-87","unit":17,"term":"ネクタイ","reading":"ネクタイ","meaning":"cà vạt"},{"id":"vocab-17-88","unit":17,"term":"ハンカチ","reading":"ハンカチ","meaning":"khăn mùi xoa, khăn bỏ túi"},{"id":"vocab-17-89","unit":17,"term":"サイフ","reading":"サイフ","meaning":"bóp, ví"},{"id":"vocab-17-90","unit":17,"term":"あげます","reading":"あげます","meaning":"cho, tặng"},{"id":"vocab-17-91","unit":17,"term":"人形","reading":"にんぎょう","meaning":"búp bê"},{"id":"vocab-17-92","unit":17,"term":"おもちゃ","reading":"おもちゃ","meaning":"đồ chơi"},{"id":"vocab-17-93","unit":17,"term":"絵本","reading":"えほん","meaning":"sách có tranh vẽ"},{"id":"vocab-17-94","unit":17,"term":"入ります（小学校に）","reading":"はいります（しょうがっこうに）","meaning":"vào (tiểu học)"}],"grammar":[{"id":"grammar-13-1","unit":13,"term":"～たら➀","reading":"","meaning":"Sau khi... (hoàn thành V1 rồi làm V2)","example":"朝礼が終わったら、チームで短い会議をします。","translation":"Sau khi cuộc họp buổi sáng kết thúc, nhóm chúng tôi họp ngắn."},{"id":"grammar-13-2","unit":13,"term":"～たら➁","reading":"","meaning":"Nếu... (câu điều kiện giả định)","example":"もし明日雨が降ったら、うちで映画を見ます。","translation":""},{"id":"grammar-13-3","unit":13,"term":"Ｖ１て","reading":"","meaning":"Liệt kê các hành động theo trình tự thời gian","example":"まず歯を磨いて、シャワーを浴びます。","translation":"Trước tiên tôi đánh răng rồi tắm vòi hoa sen."},{"id":"grammar-13-4","unit":13,"term":"～てから","reading":"","meaning":"Sau khi làm V1 thì làm V2","example":"うがいをしてから家を出ます。","translation":"Sau khi súc miệng tôi mới ra khỏi nhà."},{"id":"grammar-13-5","unit":13,"term":"～ながら","reading":"","meaning":"Vừa làm V1 vừa làm V2 (song song)","example":"パソコンを使いながら集中して働きます。","translation":"Tôi vừa dùng máy tính vừa tập trung làm việc."},{"id":"grammar-14-6","unit":14,"term":"辞書形","reading":"","meaning":"Thể từ điển của động từ","example":"キャンプへ行く","translation":"Đi cắm trại"},{"id":"grammar-14-7","unit":14,"term":"しゅみは～Vることです","reading":"","meaning":"Sở thích là việc...","example":"わたしの趣味は週末に友達とキャンプへ行くことです。","translation":"Sở thích của tôi là đi cắm trại với bạn bè vào cuối tuần."},{"id":"grammar-14-8","unit":14,"term":"～のがAナ（すき）","reading":"","meaning":"Việc làm V thì [thích/giỏi...]","example":"山の中できれいな風景の写真を撮るのも好きです。","translation":"Tôi cũng thích chụp ảnh cảnh đẹp ở trong núi."},{"id":"grammar-14-9","unit":14,"term":"～のは～Aイ","reading":"","meaning":"Việc làm V thì [quan trọng/khó...]","example":"自然の中で過ごすのは大切なことだと思います。","translation":"Tôi nghĩ việc dành thời gian trong thiên nhiên là điều quan trọng."},{"id":"grammar-14-10","unit":14,"term":"～Vることができます","reading":"","meaning":"Có thể làm V","example":"遠い場所のお客さんといつでも話すことができます。","translation":"Có thể nói chuyện với khách hàng ở nơi xa bất cứ lúc nào."},{"id":"grammar-14-11","unit":14,"term":"できません","reading":"","meaning":"Không thể làm V","example":"雑談があまりできません。","translation":"Không thể nói chuyện phiếm nhiều."},{"id":"grammar-15-12","unit":15,"term":"～つもりです","reading":"","meaning":"Dự định làm / không làm V","example":"オンラインスクールに通うつもりです。","translation":"Tôi dự định sẽ học trường trực tuyến."},{"id":"grammar-15-13","unit":15,"term":"～と思います、～だろうと思います、～んじゃないかと思います","reading":"","meaning":"Tôi nghĩ là... / Có lẽ là...","example":"学びたいと思っています。","translation":"Tôi đang nghĩ là muốn học."},{"id":"grammar-15-14","unit":15,"term":"～かもしれません","reading":"","meaning":"Có thể / Có lẽ là... (phỏng đoán)","example":"将来キャリアに役に立つかもしれません。","translation":"Có thể sẽ có ích cho sự nghiệp trong tương lai."},{"id":"grammar-15-15","unit":15,"term":"～かどうか～","reading":"","meaning":"Có... hay không","example":"この漢字の意味がわかるかどうか、わかりません。","translation":""},{"id":"grammar-15-16","unit":15,"term":"名詞修飾","reading":"","meaning":"Mệnh đề bổ nghĩa cho danh từ","example":"人間の言語理解の研究をしている先輩","translation":"Tiền bối đang nghiên cứu về sự hiểu ngôn ngữ của con người"},{"id":"grammar-15-17","unit":15,"term":"Ｖ１ないで、Ｖ２","reading":"","meaning":"Làm V2 mà không làm V1","example":"朝ごはんを食べないで、学校へ行きました。","translation":""},{"id":"grammar-15-18","unit":15,"term":"Ｖなくてもいいです、Ｎでもいいです","reading":"","meaning":"Không làm V cũng được / N cũng được","example":"会社に行かなくても家で仕事ができるようになりました。","translation":"Dù không đến công ty cũng đã có thể làm việc ở nhà."},{"id":"grammar-15-19","unit":15,"term":"～ているあいだ","reading":"","meaning":"Trong khi / Trong lúc đang...","example":"友だちが演奏しているあいだ、わたしは写真を撮りました。","translation":""},{"id":"grammar-15-20","unit":15,"term":"～までに","reading":"","meaning":"Trước... / Cho đến trước... (hạn chót)","example":"来週の金曜日までに、発表の準備をします。","translation":""},{"id":"grammar-15-21","unit":15,"term":"Ｎになります","reading":"","meaning":"Trở thành N","example":"","translation":""},{"id":"grammar-16-22","unit":16,"term":"可能形","reading":"","meaning":"Có thể làm... (Khả năng)","example":"モーツァルトの曲が弾けるようになりたいです。 / 家で仕事ができるようになりました。","translation":"Tôi muốn có thể chơi được bản nhạc của Mozart. / Tôi đã có thể làm việc ở nhà."},{"id":"grammar-16-23","unit":16,"term":"Ｖるまえ","reading":"","meaning":"Trước khi làm V","example":"会議の前にわざと少し世間話をします。","translation":"Trước cuộc họp tôi cố tình nói chuyện phiếm một chút."},{"id":"grammar-16-24","unit":16,"term":"～ので","reading":"","meaning":"Vì / Do... (chỉ nguyên nhân, lý do)","example":"わたしは料理をするのが得意なので...","translation":"Vì tôi giỏi nấu ăn nên..."},{"id":"grammar-16-25","unit":16,"term":"～ようになりました","reading":"","meaning":"Trở nên... / Đã có thể... (thay đổi trạng thái)","example":"家で仕事ができるようになりました。","translation":"Tôi đã có thể làm việc ở nhà."},{"id":"grammar-17-26","unit":17,"term":"あげます・もらいます・くれます","reading":"","meaning":"Tặng / Nhận / (Ai đó) cho, tặng (mình)","example":"社長は特別なボーナスをくれました。 / プレゼントをもらいました。","translation":"Giám đốc đã cho chúng tôi khoản tiền thưởng đặc biệt. / Tôi đã nhận được quà."},{"id":"grammar-17-27","unit":17,"term":"さしあげる・いただく・くださる","reading":"","meaning":"Tặng (người trên) / Nhận (người trên) / (Người trên) cho mình","example":"","translation":""},{"id":"grammar-17-28","unit":17,"term":"どれも※みんな","reading":"","meaning":"Cái nào cũng... (mọi thứ)","example":"どれもわたしが欲しかったものばかりでした。","translation":"Mọi thứ đều toàn là những món đồ mà tôi muốn."}],"kanji":[{"id":"kanji-13-1","unit":13,"term":"半","reading":"ハン","meaning":"Nửa, một nửa","on":"ハン","kun":"","related":"半 (nửa)"},{"id":"kanji-13-2","unit":13,"term":"授","reading":"ジュ","meaning":"Truyền thụ, dạy","on":"ジュ","kun":"","related":"授業 (じゅぎょう - tiết học)"},{"id":"kanji-13-3","unit":13,"term":"業","reading":"ギョウ","meaning":"Ngành, nghiệp","on":"ギョウ","kun":"","related":"授業 (じゅぎょう), 卒業 (そつぎょう - tốt nghiệp)"},{"id":"kanji-13-4","unit":13,"term":"図","reading":"ズ","meaning":"Bản đồ, hình vẽ","on":"ズ, ト","kun":"","related":"図書館 (としょかん - thư viện)"},{"id":"kanji-13-5","unit":13,"term":"館","reading":"カン","meaning":"Nhà, quán","on":"カン","kun":"","related":"図書館 (としょかん)"},{"id":"kanji-13-6","unit":13,"term":"研","reading":"ケン","meaning":"Nghiên cứu, mài","on":"ケン","kun":"","related":"研究室 (けんきゅうしつ - phòng nghiên cứu)"},{"id":"kanji-13-7","unit":13,"term":"究","reading":"キュウ","meaning":"Nghiên cứu, điều tra","on":"キュウ","kun":"","related":"研究室 (けんきゅうしつ)"},{"id":"kanji-13-8","unit":13,"term":"室","reading":"シツ","meaning":"Phòng","on":"シツ","kun":"","related":"研究室 (けんきゅうしつ)"},{"id":"kanji-13-9","unit":13,"term":"実","reading":"ジツ","meaning":"Thực tế, thực hành","on":"ジツ","kun":"","related":"実験 (じっけん - thí nghiệm)"},{"id":"kanji-13-10","unit":13,"term":"験","reading":"ケン","meaning":"Thử nghiệm, kiểm tra","on":"ケン","kun":"","related":"実験 (じっけん), 試験 (しけん - kỳ thi)"},{"id":"kanji-13-11","unit":13,"term":"発","reading":"ハツ","meaning":"Phát ra, khởi hành","on":"ハツ, ホツ","kun":"","related":"発表 (はっぴょう - phát biểu)"},{"id":"kanji-13-12","unit":13,"term":"表","reading":"ヒョウ, あらわ","meaning":"Biểu diễn, bề mặt","on":"ヒョウ","kun":"あらわ.す","related":"発表 (はっぴょう)"},{"id":"kanji-13-13","unit":13,"term":"準","reading":"ジュン","meaning":"Chuẩn bị, tiêu chuẩn","on":"ジュン","kun":"","related":"準備 (じゅんび - chuẩn bị)"},{"id":"kanji-13-14","unit":13,"term":"備","reading":"ビ","meaning":"Trang bị, chuẩn bị","on":"ビ","kun":"そな.える","related":"準備 (じゅんび)"},{"id":"kanji-13-15","unit":13,"term":"始","reading":"はじ","meaning":"Bắt đầu","on":"シ","kun":"はじ.める","related":"始めます (はじめます)"},{"id":"kanji-13-16","unit":13,"term":"終","reading":"お","meaning":"Kết thúc","on":"シュウ","kun":"お.わる","related":"終わります (おわります)"},{"id":"kanji-13-17","unit":13,"term":"暗","reading":"くら","meaning":"Tối","on":"アン","kun":"くら.い","related":"暗い (くらい)"},{"id":"kanji-13-18","unit":13,"term":"遅","reading":"おく","meaning":"Trễ, muộn","on":"チ","kun":"おく.れる","related":"遅い (おそい), 遅れます (おくれます)"},{"id":"kanji-13-19","unit":13,"term":"開","reading":"ひら, かい","meaning":"Khai mạc, mở ra","on":"カイ","kun":"あ, ひら","related":"開きます (ひらきます), 開始します (かいしします)"},{"id":"kanji-13-20","unit":13,"term":"集","reading":"あつ, しゅう","meaning":"Tập trung, tập hợp","on":"シュウ","kun":"あつ","related":"集めます (あつめます), 集合 (しゅうごう)"},{"id":"kanji-13-21","unit":13,"term":"夕","reading":"ゆう","meaning":"Chiều tà","on":"ユウ","kun":"","related":"夕方 (ゆうがた), 夕食 (ゆうしょく)"},{"id":"kanji-13-22","unit":13,"term":"昼","reading":"ひる","meaning":"Buổi trưa","on":"チュウ","kun":"ひる","related":"昼ごはん (ひるごはん), 昼休み (ひるやすみ)"},{"id":"kanji-13-23","unit":13,"term":"飯","reading":"はん, めし","meaning":"Cơm","on":"ハン","kun":"めし","related":"ご飯 (ごはん), 朝ご飯 (あさごはん)"},{"id":"kanji-13-24","unit":13,"term":"堂","reading":"どう, とう","meaning":"Từ đường, gian phòng","on":"トウ","kun":"","related":"食堂 (しょくどう), 講堂 (こうどう)"},{"id":"kanji-13-25","unit":13,"term":"肉","reading":"にく","meaning":"Thịt","on":"ニク","kun":"","related":"肉 (にく), 牛肉 (ぎゅうにく)"},{"id":"kanji-13-26","unit":13,"term":"服","reading":"ふく","meaning":"Trang phục","on":"フク","kun":"","related":"服 (ふく), 洋服 (ようふく)"},{"id":"kanji-13-27","unit":13,"term":"薬","reading":"くすり, やく","meaning":"Thuốc","on":"ヤク","kun":"くすり","related":"薬 (くすり), 薬局 (やっきょく)"},{"id":"kanji-14-28","unit":14,"term":"音","reading":"おん, おと","meaning":"Âm thanh","on":"オン, イン","kun":"おと, ね","related":"音楽 (おんがく), 発音 (はつおん)"},{"id":"kanji-14-29","unit":14,"term":"映","reading":"えい, うつ","meaning":"Phản chiếu","on":"エイ","kun":"うつる, はえる","related":"映画 (えいが), 映る (うつる)"},{"id":"kanji-14-30","unit":14,"term":"画","reading":"が","meaning":"Bức tranh, quy hoạch","on":"ガ, ガク","kun":"え, えがく","related":"画家 (がか), 画面 (がめん), 映画 (えいが)"},{"id":"kanji-14-31","unit":14,"term":"趣","reading":"しゅ","meaning":"Hứng thú, sở thích","on":"シュ","kun":"おもむき","related":"趣味 (しゅみ), 趣 (おもむき)"},{"id":"kanji-14-32","unit":14,"term":"味","reading":"み, あじ","meaning":"Hương vị","on":"ミ","kun":"あじ","related":"味 (あじ), 趣味 (しゅみ), 意味 (いみ)"},{"id":"kanji-14-33","unit":14,"term":"写","reading":"しゃ, うつ","meaning":"Chụp, sao chép","on":"シャ, ジャ","kun":"うつす, うつる","related":"写真 (しゃしん), 写る (うつる)"},{"id":"kanji-14-34","unit":14,"term":"真","reading":"しん, ま","meaning":"Chân thực","on":"シン","kun":"ま, まこと","related":"写真 (しゃしん), 真実 (しんじつ)"},{"id":"kanji-14-35","unit":14,"term":"結","reading":"けっ, むす","meaning":"Thắt, buộc, kết","on":"ケツ, ケチ","kun":"むすぶ","related":"結婚 (けっこん), 結ぶ (むすぶ)"},{"id":"kanji-14-36","unit":14,"term":"婚","reading":"こん","meaning":"Kết hôn","on":"コン","kun":"","related":"離婚 (りこん), 新婚 (しんこん), 結婚 (けっこん)"},{"id":"kanji-14-37","unit":14,"term":"旅","reading":"りょ, たび","meaning":"Du lịch, đi xa","on":"リョ","kun":"たび","related":"旅行 (りょこう), 旅 (たび)"},{"id":"kanji-14-38","unit":14,"term":"妻","reading":"つま, さい","meaning":"Vợ","on":"サイ","kun":"つま","related":"妻 (つま), 夫妻 (ふさい)"},{"id":"kanji-14-39","unit":14,"term":"曲","reading":"きょく, ま","meaning":"Khúc nhạc, uốn/rẽ","on":"キョク","kun":"まがる","related":"曲 (きょく), 曲がる (まがる)"},{"id":"kanji-14-40","unit":14,"term":"当","reading":"あた, とう","meaning":"Đương, trúng","on":"トウ","kun":"あた.る","related":"当たる (あたる), 当日 (とうじつ)"},{"id":"kanji-14-41","unit":14,"term":"飲","reading":"の, いん","meaning":"Uống","on":"イン, オン","kun":"の.む","related":"飲みます (のみます), 飲食 (いんしょく)"},{"id":"kanji-14-42","unit":14,"term":"習","reading":"なら, しゅう","meaning":"Học tập","on":"シュウ, ジュ","kun":"なら.う","related":"習います (ならいます), 自習 (じしゅう)"},{"id":"kanji-14-43","unit":14,"term":"員","reading":"いん","meaning":"Thành viên","on":"イン","kun":"","related":"会社員 (かいしゃいん), 銀行員 (ぎんこういん)"},{"id":"kanji-14-44","unit":14,"term":"心","reading":"こころ, しん","meaning":"Tim, tấm lòng","on":"シン","kun":"こころ","related":"心 (こころ), 心臓 (しんぞう)"},{"id":"kanji-14-45","unit":14,"term":"働","reading":"はたら, どう","meaning":"Lao động, làm việc","on":"ドウ","kun":"はたら.く","related":"働きます (はたらきます), 労働 (ろうどう)"},{"id":"kanji-15-46","unit":15,"term":"専","reading":"せん","meaning":"Chuyên môn, chuyên gia","on":"セン","kun":"もっぱ.ら","related":"専門 (せんもん), 専門家 (せんもんか)"},{"id":"kanji-15-47","unit":15,"term":"門","reading":"もん, かど","meaning":"Cổng","on":"モン","kun":"かど, と","related":"門 (もん), 専門 (せんもん)"},{"id":"kanji-15-48","unit":15,"term":"工","reading":"こう","meaning":"Công nghiệp","on":"コウ","kun":"","related":"工業 (こうぎょう), 工学部 (こうがくぶ), 情報工学 (じょうほうこうがく)"},{"id":"kanji-15-49","unit":15,"term":"部","reading":"ぶ","meaning":"Phòng ban, câu lạc bộ","on":"ブ","kun":"べ","related":"工学部 (こうがくぶ), テニス部 (テニスぶ)"},{"id":"kanji-15-50","unit":15,"term":"卒","reading":"そつ","meaning":"Tốt nghiệp","on":"ソツ","kun":"そっ.する","related":"卒業 (そつぎょう), 卒業生 (そつぎょうせい)"},{"id":"kanji-15-51","unit":15,"term":"院","reading":"いん","meaning":"Viện, khu nhà có tường bao","on":"イン","kun":"","related":"病院 (びょういん), 大学院 (だいがくいん)"},{"id":"kanji-15-52","unit":15,"term":"言","reading":"げん, い","meaning":"Nói, ngôn ngữ","on":"ゴン, ゲン","kun":"い.う, こと","related":"言語 (げんご), 言います (いいます)"},{"id":"kanji-15-53","unit":15,"term":"理","reading":"り","meaning":"Lý do, lý giải","on":"リ","kun":"ことわり","related":"理由 (りゆう), 理解 (りかい), 料理 (りょうり)"},{"id":"kanji-15-54","unit":15,"term":"解","reading":"かい, と","meaning":"Cởi, gỡ ra, giải thích","on":"カイ","kun":"と.く, と.ける","related":"解きます (ときます), 理解 (りかい)"},{"id":"kanji-15-55","unit":15,"term":"進","reading":"しん, すす","meaning":"Tiến lên","on":"シン","kun":"すす.む","related":"進みます (すすみます), 進学 (しんがく)"},{"id":"kanji-15-56","unit":15,"term":"性","reading":"せい","meaning":"Tính cách, giới tính","on":"セイ, ショウ","kun":"","related":"性格 (せいかく), 性別 (せいべつ), 女性 (じょせい)"},{"id":"kanji-15-57","unit":15,"term":"決","reading":"き, けっ","meaning":"Nhất quyết, quyết liệt","on":"ケッ, ケツ","kun":"き.める","related":"決めます (きめます), 決心 (けっしん)"},{"id":"kanji-15-58","unit":15,"term":"続","reading":"つづ,ぞく","meaning":"Tiếp tục","on":"ゾク","kun":"つづ.ける","related":"続けます (つづけます), 手続き (てつづき)"},{"id":"kanji-15-59","unit":15,"term":"建","reading":"た, けん","meaning":"Dựng lên, xây dựng","on":"ケン","kun":"た.てる","related":"建てます (たてます), 建物 (たてもの)"},{"id":"kanji-15-60","unit":15,"term":"考","reading":"かんが, こう","meaning":"Khảo xét, suy nghĩ","on":"コウ","kun":"かんが.える","related":"考えます (かんがえます), 参考 (さんこう)"},{"id":"kanji-15-61","unit":15,"term":"合","reading":"あ, ごう","meaning":"Góp lại, hợp","on":"ゴウ","kun":"あ.う","related":"合います (あいます), 集合 (しゅうごう)"},{"id":"kanji-15-62","unit":15,"term":"試","reading":"し, ため","meaning":"Thử, thi","on":"シ","kun":"ため.す","related":"試験 (しけん), 試します (ためします)"},{"id":"kanji-16-63","unit":16,"term":"系","reading":"けい","meaning":"Quan hệ, huyết thống, dòng","on":"ケイ, ゲイ","kun":"","related":"中国系 (ちゅうごくけい), 日系企業 (にっけいきぎょう)"},{"id":"kanji-16-64","unit":16,"term":"私","reading":"わたし, し","meaning":"Tư nhân, tôi, riêng tư","on":"シ","kun":"わたし, わたくし","related":"私 (わたし), 私立 (しりつ)"},{"id":"kanji-16-65","unit":16,"term":"立","reading":"りつ, た","meaning":"Đứng, thành lập","on":"リツ","kun":"た.つ","related":"私立 (しりつ), 立ちます (たちます)"},{"id":"kanji-16-66","unit":16,"term":"漢","reading":"かん","meaning":"Chữ Hán","on":"カン","kun":"","related":"漢字 (かんじ), 漢和辞典 (かんわじてん)"},{"id":"kanji-16-67","unit":16,"term":"字","reading":"じ","meaning":"Chữ","on":"ジ","kun":"あざ","related":"漢字 (かんじ), 文字 (もじ)"},{"id":"kanji-16-68","unit":16,"term":"意","reading":"い","meaning":"Ý nghĩa, ý kiến","on":"イ","kun":"","related":"意味 (いみ), 意見 (いけん)"},{"id":"kanji-16-69","unit":16,"term":"料","reading":"りょう","meaning":"Tài liệu, nguyên liệu, phí","on":"リョウ","kun":"","related":"料理 (りょうり), 材料 (ざいりょう)"},{"id":"kanji-16-70","unit":16,"term":"最","reading":"さい, もっと","meaning":"Nhất","on":"サイ","kun":"もっと.も","related":"最初 (さいしょ), 最近 (さいきん)"},{"id":"kanji-16-71","unit":16,"term":"方","reading":"ほう, かた","meaning":"Phương pháp, phương hướng","on":"ホウ","kun":"かた","related":"読み方 (よみかた), 方法 (ほうほう)"},{"id":"kanji-16-72","unit":16,"term":"何","reading":"なに, なん","meaning":"Cái gì","on":"カ","kun":"なに, なん","related":"何 (なに/なん), 何人 (なんにん)"},{"id":"kanji-16-73","unit":16,"term":"前","reading":"ぜん, まえ","meaning":"Trước","on":"ゼン","kun":"まえ","related":"前 (まえ), 午前 (ごぜん)"},{"id":"kanji-16-74","unit":16,"term":"得","reading":"とく, え","meaning":"Đắc ý, thu được","on":"トク","kun":"え.る","related":"得意 (とくい), 得ます (えます)"},{"id":"kanji-16-75","unit":16,"term":"正","reading":"ただ, しょう","meaning":"Chính xác, đúng","on":"セイ, ショウ","kun":"ただ.しい","related":"正しい (ただしい), 正午 (しょうご)"},{"id":"kanji-16-76","unit":16,"term":"題","reading":"だい","meaning":"Vấn đề, đề tài","on":"ダイ","kun":"","related":"問題 (もんだい), 話題 (わだい)"},{"id":"kanji-16-77","unit":16,"term":"不","reading":"ふ, ぶ","meaning":"Bất tiện, bất an","on":"フ, ブ","kun":"","related":"不便 (ふべん), 不安 (ふあん)"},{"id":"kanji-17-78","unit":17,"term":"計","reading":"けい","meaning":"Kế hoạch, đồng hồ","on":"ケイ","kun":"はか.る","related":"時計 (とけい), 計画 (けいかく)"},{"id":"kanji-17-79","unit":17,"term":"親","reading":"しん, おや","meaning":"Bố mẹ, người thân","on":"シン","kun":"おや","related":"親 (おや), 両親 (りょうしん), 親戚 (しんせき)"},{"id":"kanji-17-80","unit":17,"term":"戚","reading":"せき","meaning":"Thân thích","on":"ソク, セキ","kun":"いた, うれ","related":"親戚 (しんせき)"},{"id":"kanji-17-81","unit":17,"term":"誕","reading":"たん","meaning":"Sinh ra, sinh nhật","on":"タン","kun":"","related":"誕生日 (たんじょうび)"},{"id":"kanji-17-82","unit":17,"term":"夜","reading":"よる, や","meaning":"Buổi đêm, tối","on":"ヤ","kun":"よる, よ","related":"夜 (よる), 今夜 (こんや)"},{"id":"kanji-17-83","unit":17,"term":"彼","reading":"かれ, かの","meaning":"Người khác, anh ấy/cô ấy","on":"ヒ","kun":"かれ, かの","related":"彼女 (かのじょ), 彼 (かれ)"},{"id":"kanji-17-84","unit":17,"term":"形","reading":"かたち, ぎょう","meaning":"Hình dáng, hình nhân","on":"ケイ, ギョウ","kun":"かたち","related":"形 (かたち), 人形 (にんぎょう)"},{"id":"kanji-17-85","unit":17,"term":"絵","reading":"え","meaning":"Hội hoạ, tranh ảnh","on":"カイ, エ","kun":"","related":"絵 (え), 絵はがき (えはがき), 絵本 (えほん)"},{"id":"kanji-17-86","unit":17,"term":"歌","reading":"うた, か","meaning":"Ca hát, ca sĩ","on":"カ","kun":"うた","related":"歌 (うた), 歌手 (かしゅ)"},{"id":"kanji-17-87","unit":17,"term":"茶","reading":"ちゃ, さ","meaning":"Trà, trà đạo","on":"チャ, サ","kun":"","related":"お茶 (おちゃ), 茶道 (さどう)"},{"id":"kanji-17-88","unit":17,"term":"特","reading":"とく","meaning":"Đặc biệt","on":"トク","kun":"","related":"特に (とくに), 特別 (とくべつ)"},{"id":"kanji-17-89","unit":17,"term":"用","reading":"よう, もち","meaning":"Sử dụng, ứng dụng","on":"ヨウ","kun":"もち.いる","related":"使用 (しよう), 用います (もちいます)"}],"se":[{"id":"se-13-1","unit":13,"term":"始業時間","reading":"しぎょうじかん","meaning":"Giờ bắt đầu làm việc"},{"id":"se-13-2","unit":13,"term":"朝礼","reading":"ちょうれい","meaning":"Buổi họp giao ban ngắn đầu giờ sáng"},{"id":"se-13-3","unit":13,"term":"当番制","reading":"とうばんせい","meaning":"Chế độ luân phiên trực nhật"},{"id":"se-13-4","unit":13,"term":"訓練","reading":"くんれん","meaning":"Huấn luyện, đào tạo, rèn luyện"},{"id":"se-13-5","unit":13,"term":"単位","reading":"たんい","meaning":"Đơn vị (ví dụ: đơn vị nhóm dự án)"},{"id":"se-13-6","unit":13,"term":"カンバン","reading":"かんばん","meaning":"Phương pháp quản lý Kanban (bảng tiến độ trực quan)"},{"id":"se-13-7","unit":13,"term":"ホワイトボード","reading":"ほわいとぼーど","meaning":"Bảng trắng"},{"id":"se-13-8","unit":13,"term":"作業状況","reading":"さぎょうじょうきょう","meaning":"Tình hình công việc, trạng thái tác nghiệp"},{"id":"se-13-9","unit":13,"term":"短時間","reading":"たんじかん","meaning":"Thời gian ngắn"},{"id":"se-13-10","unit":13,"term":"終わらせる","reading":"おわらせる","meaning":"Hoàn thành, kết thúc (thể sai khiến của 終わる)"},{"id":"se-13-11","unit":13,"term":"課題","reading":"かだい","meaning":"Vấn đề, thách thức cần giải quyết"},{"id":"se-13-12","unit":13,"term":"対策","reading":"たいさく","meaning":"Biện pháp giải quyết, đối sách"},{"id":"se-13-13","unit":13,"term":"開発担当","reading":"かいはつたんとう","meaning":"Người phụ trách phát triển"},{"id":"se-13-14","unit":13,"term":"部長","reading":"ぶちょう","meaning":"Trưởng phòng"},{"id":"se-13-15","unit":13,"term":"出来上がる","reading":"できあがる","meaning":"Hoàn thành, được làm xong"},{"id":"se-13-16","unit":13,"term":"製品","reading":"せいひん","meaning":"Sản phẩm"},{"id":"se-13-17","unit":13,"term":"休憩","reading":"きゅうけい","meaning":"Nghỉ giải lao"},{"id":"se-14-18","unit":14,"term":"きっかけ","reading":"－","meaning":"Cơ hội, khởi đầu, động cơ, lý do bắt đầu"},{"id":"se-14-19","unit":14,"term":"情報処理工学科","reading":"じょうほうしょりこうがっか","meaning":"Khoa Kỹ thuật xử lý thông tin"},{"id":"se-14-20","unit":14,"term":"入社する","reading":"にゅうしゃする","meaning":"Vào công ty, gia nhập công ty"},{"id":"se-14-21","unit":14,"term":"データベース","reading":"でーたべーす","meaning":"Cơ sở dữ liệu"},{"id":"se-14-22","unit":14,"term":"ネットワーク","reading":"ねっとわーく","meaning":"Mạng máy tính"},{"id":"se-14-23","unit":14,"term":"身につける","reading":"みにつける","meaning":"Tiếp thu, học hỏi, tích lũy (kiến thức, kỹ năng)"},{"id":"se-14-24","unit":14,"term":"気がつく","reading":"きがつく","meaning":"Nhận ra, nhận thấy"},{"id":"se-14-25","unit":14,"term":"IT技術","reading":"ITぎじゅつ","meaning":"Công nghệ IT, kỹ thuật công nghệ thông tin"},{"id":"se-14-26","unit":14,"term":"解決する","reading":"かいけつする","meaning":"Giải quyết"},{"id":"se-14-27","unit":14,"term":"印象に残る","reading":"いんしょうにのこる","meaning":"Để lại ấn tượng"},{"id":"se-14-28","unit":14,"term":"介護","reading":"かいご","meaning":"Chăm sóc người bệnh, điều dưỡng"},{"id":"se-14-29","unit":14,"term":"医療","reading":"いりょう","meaning":"Y tế, điều trị y tế"},{"id":"se-14-30","unit":14,"term":"人手不足","reading":"ひとでぶそく","meaning":"Thiếu nhân lực, thiếu người làm"},{"id":"se-14-31","unit":14,"term":"ITの力","reading":"ITのちから","meaning":"Sức mạnh của công nghệ thông tin"},{"id":"se-15-32","unit":15,"term":"進路","reading":"しんろ","meaning":"Định hướng tương lai, con đường tiến thân, định hướng sự nghiệp"},{"id":"se-15-33","unit":15,"term":"〜について","reading":"－","meaning":"Mẫu câu / Ngữ pháp: Về, liên quan đến ~"},{"id":"se-15-34","unit":15,"term":"相談する","reading":"そうだんする","meaning":"Thảo luận, trao đổi, tư vấn"},{"id":"se-15-35","unit":15,"term":"まだ〜ていません","reading":"－","meaning":"Mẫu câu / Ngữ pháp: Vẫn chưa... (biểu thị trạng thái chưa hoàn thành)"},{"id":"se-15-36","unit":15,"term":"決める","reading":"きめる","meaning":"Quyết định"},{"id":"se-15-37","unit":15,"term":"WEB系の開発エンジニア","reading":"WEBけいのかいはつエンジニア","meaning":"Kỹ sư phát triển hệ thống Web"},{"id":"se-15-38","unit":15,"term":"興味がある","reading":"きょうみがある","meaning":"Có hứng thú, có quan tâm"},{"id":"se-15-39","unit":15,"term":"ビッグデータ","reading":"－","meaning":"Dữ liệu lớn (Big Data)"},{"id":"se-15-40","unit":15,"term":"分析する","reading":"ぶんせきする","meaning":"Phân tích"},{"id":"se-15-41","unit":15,"term":"心配","reading":"しんぱい","meaning":"Lo lắng, lo ngại"},{"id":"se-15-42","unit":15,"term":"一生懸命","reading":"いっしょうけんめい","meaning":"Hết sức mình, chăm chỉ, cần mẫn"},{"id":"se-15-43","unit":15,"term":"〜上手になる","reading":"〜じょうずになる","meaning":"Mẫu câu / Ngữ pháp: Trở nên giỏi, thành thạo (việc gì đó)"},{"id":"se-15-44","unit":15,"term":"〜関わる","reading":"〜かかわる","meaning":"Liên quan, tham gia vào"},{"id":"se-15-45","unit":15,"term":"ITの知識","reading":"ITのちしき","meaning":"Kiến thức về công nghệ thông tin (IT)"},{"id":"se-15-46","unit":15,"term":"担当する","reading":"たんとうする","meaning":"Đảm nhiệm, phụ trách"},{"id":"se-15-47","unit":15,"term":"目標","reading":"もくひょう","meaning":"Mục tiêu"},{"id":"se-15-48","unit":15,"term":"インターンシップ","reading":"－","meaning":"Thực tập (Internship)"},{"id":"se-15-49","unit":15,"term":"自分に合う","reading":"じぶんにあう","meaning":"Phù hợp với bản thân"},{"id":"se-15-50","unit":15,"term":"見つける","reading":"みつける","meaning":"Tìm thấy"},{"id":"se-15-51","unit":15,"term":"しっかりする","reading":"－","meaning":"Chỉn chu, nghiêm túc"},{"id":"se-15-52","unit":15,"term":"頑張る","reading":"がんばる","meaning":"Cố gắng"},{"id":"se-16-53","unit":16,"term":"ニュースレター","reading":"－","meaning":"Bản tin nội bộ"},{"id":"se-16-54","unit":16,"term":"リモートワーク","reading":"－","meaning":"Làm việc từ xa (Remote work)"},{"id":"se-16-55","unit":16,"term":"〜ようになる","reading":"－","meaning":"Mẫu câu: Biểu thị sự thay đổi trạng thái, thói quen hoặc khả năng (Trở nên..., bắt đầu có thể...)"},{"id":"se-16-56","unit":16,"term":"画面","reading":"がめん","meaning":"Màn hình"},{"id":"se-16-57","unit":16,"term":"共有する","reading":"きょうゆうする","meaning":"Chia sẻ"},{"id":"se-16-58","unit":16,"term":"説明","reading":"せつめい","meaning":"Giải thích, thuyết minh"},{"id":"se-16-59","unit":16,"term":"チャット","reading":"－","meaning":"Chat, trò chuyện trực tuyến"},{"id":"se-16-60","unit":16,"term":"連絡","reading":"れんらく","meaning":"Liên lạc, thông báo"},{"id":"se-16-61","unit":16,"term":"〜こともある","reading":"－","meaning":"Mẫu câu: Cũng có lúc, cũng có trường hợp xảy ra như vậy"},{"id":"se-16-62","unit":16,"term":"意外","reading":"いがい","meaning":"Ngoài dự tính, ngạc nhiên, không ngờ đến"},{"id":"se-16-63","unit":16,"term":"少なくなる","reading":"すくなくなる","meaning":"Trở nên ít đi, giảm đi"},{"id":"se-16-64","unit":16,"term":"休憩時間","reading":"きゅうけいじかん","meaning":"Thời gian nghỉ giải lao"},{"id":"se-16-65","unit":16,"term":"同僚","reading":"どうりょう","meaning":"Đồng nghiệp"},{"id":"se-16-66","unit":16,"term":"話せる","reading":"はなせる","meaning":"Có thể nói chuyện (Thể khả năng của động từ 話す)"},{"id":"se-16-67","unit":16,"term":"〜Vると、〜","reading":"－","meaning":"Mẫu câu: Hễ/Sau khi thực hiện hành động V thì một hành động/kết quả khác lập tức xảy ra ngay sau đó"},{"id":"se-16-68","unit":16,"term":"戻る","reading":"もどる","meaning":"Quay lại, trở lại"},{"id":"se-16-69","unit":16,"term":"最近","reading":"さいきん","meaning":"Gần đây"},{"id":"se-16-70","unit":16,"term":"複雑","reading":"ふくざつ","meaning":"Phức tạp"},{"id":"se-16-71","unit":16,"term":"予定","reading":"よてい","meaning":"Dự định, kế hoạch"},{"id":"se-16-72","unit":16,"term":"雰囲気","reading":"ふんいき","meaning":"Bầu không khí"},{"id":"se-16-73","unit":16,"term":"よくなる","reading":"－","meaning":"Trở nên tốt hơn (Tính từ 良い biến đổi trạng thái sang dạng phó từ kết hợp với なる)"},{"id":"se-16-74","unit":16,"term":"便利","reading":"べんり","meaning":"Tiện lợi, thuận tiện"},{"id":"se-16-75","unit":16,"term":"方法","reading":"ほうほう","meaning":"Phương pháp, cách thức"},{"id":"se-17-76","unit":17,"term":"インターン生","reading":"インターンせい","meaning":"Thực tập sinh"},{"id":"se-17-77","unit":17,"term":"同僚","reading":"どうりょう","meaning":"Đồng nghiệp"},{"id":"se-17-78","unit":17,"term":"用意する","reading":"よういする","meaning":"Chuẩn bị, sửa soạn"},{"id":"se-17-79","unit":17,"term":"〜ようと思っています","reading":"〜ようとおもっています","meaning":"Mẫu câu / Ngữ pháp: Dự định làm gì"},{"id":"se-17-80","unit":17,"term":"あげる","reading":"－","meaning":"Tặng, cho"},{"id":"se-17-81","unit":17,"term":"開ける","reading":"あける","meaning":"Mở (quà, hộp, phong bì...)"},{"id":"se-17-82","unit":17,"term":"カップ","reading":"－","meaning":"Cái tách, cái ly, cốc"},{"id":"se-17-83","unit":17,"term":"部長","reading":"ぶちょう","meaning":"Trưởng phòng, sếp"},{"id":"se-17-84","unit":17,"term":"くれる","reading":"－","meaning":"Mẫu câu / Ngữ pháp: cho tôi, tặng tôi"},{"id":"se-17-85","unit":17,"term":"大切にする","reading":"たいせつにする","meaning":"Trân trọng, giữ gìn, bảo vệ cẩn thận"}]},"unit_links":{"vocab":{"13":"https://quizlet.com/vn/1212524853/unit-13-%E8%AA%9E%E5%BD%99-flash-cards/?i=4ibtbi&x=1jqt","14":"https://quizlet.com/vn/1212524185/unit-14-%E8%AA%9E%E5%BD%99-flash-cards/?i=4ibtbi&x=1jqt","15":"https://quizlet.com/vn/1212411669/unit-15-%E8%AA%9E%E5%BD%99-flash-cards/?i=4ibtbi&x=1jqt","16":"https://quizlet.com/vn/1208731319/unit-16-%E8%AA%9E%E5%BD%99-flash-cards/?i=4ibtbi&x=1jqt","17":"https://quizlet.com/vn/1212525112/unit-17-%E8%AA%9E%E5%BD%99-flash-cards/?i=4ibtbi&x=1jqt"},"se":{"13":"https://quizlet.com/vn/1212537583/se-13-flash-cards/?i=4ibtbi&x=1jqt","14":"https://quizlet.com/vn/1212537742/se-14-flash-cards/?i=4ibtbi&x=1jqt","15":"https://quizlet.com/vn/1207150395/se-unit-15-flash-cards/?i=4ibtbi&x=1jqt","16":"https://quizlet.com/vn/1209824783/se-unit-16-flash-cards/?i=4ibtbi&x=1jqt","17":"https://quizlet.com/vn/1212538072/se-17-flash-cards/?i=4ibtbi&x=1jqt"}},"overall_links":{}};
+const SECTION_META = {
+  vocab: {title:'Từ vựng', sub:'語彙 · Từ vựng tổng quát', symbol:'語彙', icon:'あ', desc:'Ghi nhớ từ, cách đọc và nghĩa tiếng Việt.'},
+  grammar: {title:'Ngữ pháp', sub:'文法 · Mẫu câu và ví dụ', symbol:'文法', icon:'文', desc:'Hiểu ý nghĩa mẫu câu qua ví dụ tiếng Nhật.'},
+  kanji: {title:'Kanji', sub:'漢字 · Âm đọc và từ liên quan', symbol:'漢字', icon:'漢', desc:'Học chữ Hán, âm On/Kun và từ vựng liên quan.'},
+  se: {title:'Từ vựng SE', sub:'SE専門語彙 · Công nghệ thông tin', symbol:'SE', icon:'SE', desc:'Ôn từ vựng chuyên ngành, IT và môi trường làm việc.'}
+};
+const UNIT_NAMES = {13:'Nhịp sống & công việc',14:'Sở thích & trải nghiệm',15:'Học tập & tương lai',16:'Cách làm & thay đổi',17:'Quà tặng & giao tiếp'};
+const SECTION_ORDER = ['vocab','grammar','kanji','se'];
+const state = {section:'vocab', unit:'all', search:'', mode:'study', showAnswer:false, index:0, mastered:new Set(), quiz:{items:[],index:0,score:0,answered:false,selected:-1,finished:false}};
+const $ = (selector, root=document) => root.querySelector(selector);
+const $$ = (selector, root=document) => [...root.querySelectorAll(selector)];
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function shuffle(items) { const a=[...items]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function allItems(section=state.section) { return DATA.sections[section] || []; }
+function getItems({ignoreSearch=false, section=state.section, unit=state.unit}={}) {
+  let items=allItems(section);
+  if(unit!=='all') items=items.filter(x=>String(x.unit)===String(unit));
+  if(!ignoreSearch && state.search.trim()) {
+    const q=state.search.trim().toLocaleLowerCase('vi');
+    items=items.filter(x=>[x.term,x.reading,x.meaning,x.example,x.translation,x.on,x.kun,x.related].join(' ').toLocaleLowerCase('vi').includes(q));
+  }
+  return items;
+}
+function unitCount(unit, section) { return allItems(section).filter(x=>String(x.unit)===String(unit)).length; }
+function totalRecords(){return SECTION_ORDER.reduce((n,s)=>n+allItems(s).length,0);}
+function showToast(message){const t=$('#toast');t.textContent=message;t.classList.add('show');clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>t.classList.remove('show'),2100);}
+function setSection(section){state.section=section;state.index=0;state.showAnswer=false;state.search='';delete state._shuffled;$('#search').value='';resetQuiz();if(state.mode==='quiz')initQuiz();renderAll();}
+function setUnit(unit){state.unit=String(unit);state.index=0;state.showAnswer=false;delete state._shuffled;resetQuiz();if(state.mode==='quiz')initQuiz();renderAll();}
+function setMode(mode){state.mode=mode;if(mode==='quiz' && !state.quiz.items.length) initQuiz();renderAll();if(mode==='quiz') $('#quiz-content').scrollIntoView({behavior:'smooth',block:'nearest'});}
+function resetQuiz(){state.quiz={items:[],index:0,score:0,answered:false,selected:-1,finished:false};}
+function renderHero(){
+  const count=totalRecords();
+  $('#stats').innerHTML = [
+    {n:count,label:'Tổng mục kiến thức',note:'Đã gom từ 4 bảng',icon:'✦'},
+    {n:5,label:'Unit cần ôn',note:'Từ Unit 13 đến 17',icon:'▦'},
+    {n:allItems('grammar').length,label:'Mẫu ngữ pháp',note:'Kèm ví dụ trong file',icon:'文'},
+    {n:allItems('kanji').length,label:'Chữ Kanji',note:'Có âm đọc, nghĩa, từ liên quan',icon:'漢'}
+  ].map(s=>`<div class="stat"><div class="stat-head"><span>${esc(s.label)}</span><span class="stat-icon">${esc(s.icon)}</span></div><div class="stat-number">${s.n}</div><div class="stat-note">${esc(s.note)}</div></div>`).join('');
+  $('#hero-units').innerHTML=[13,14,15,16,17].map(u=>`<button class="unit-chip ${state.unit===String(u)?'active':''}" data-unit="${u}">Unit ${u}</button>`).join('');
+}
+function renderUnits(){
+  $('#units-grid').innerHTML=[13,14,15,16,17].map(u=>{
+    const total=SECTION_ORDER.reduce((n,s)=>n+unitCount(u,s),0);
+    return `<button class="unit-card ${state.unit===String(u)?'active':''}" data-unit="${u}" aria-pressed="${state.unit===String(u)}"><div class="unit-card-top"><span class="unit-number">${u}</span><span class="unit-total">${total} mục</span></div><h3>Unit ${u}</h3><p>${esc(UNIT_NAMES[u])}</p><div class="unit-mini-bars" aria-label="4 nhóm kiến thức">${SECTION_ORDER.map(s=>`<span title="${esc(SECTION_META[s].title)}: ${unitCount(u,s)} mục"></span>`).join('')}</div></button>`;
+  }).join('');
+}
+function renderTabs(){
+  $('#category-tabs').innerHTML=SECTION_ORDER.map(s=>`<button class="category-tab ${state.section===s?'active':''}" data-section="${s}" aria-pressed="${state.section===s}"><span class="tab-symbol">${esc(SECTION_META[s].icon)}</span><span><span class="tab-title">${esc(SECTION_META[s].title)}</span><span class="tab-sub">${esc(SECTION_META[s].sub)}</span></span><span class="tab-count">${getItems({ignoreSearch:true,section:s}).length}</span></button>`).join('');
+}
+function renderFilters(){
+  $$('#filters [data-unit]').forEach(b=>{const active=String(b.dataset.unit)===state.unit;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});
+  const items=getItems();
+  $('#record-count').innerHTML=`Đang hiển thị <strong>${items.length}</strong> / ${getItems({ignoreSearch:true}).length} mục`;
+  const link=(DATA.unit_links[state.section]||{})[state.unit];
+  const quizLink=$('#quizlet-link');
+  if(link){quizLink.href=link;quizLink.hidden=false;} else {quizLink.hidden=true;quizLink.removeAttribute('href');}
+}
+function renderWorkspaceHeader(){
+  const m=SECTION_META[state.section];
+  $('#workspace-mark').textContent=m.symbol;$('#workspace-heading').textContent=m.title;$('#workspace-description').textContent=m.desc;
+  $$('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===state.mode));
+  $('#study-pane').classList.toggle('hidden-pane',state.mode!=='study');
+  $('#list-pane').classList.toggle('hidden-pane',state.mode!=='list');
+  $('#quiz-pane').classList.toggle('hidden-pane',state.mode!=='quiz');
+}
+function detailHTML(item, compact=false){
+  const s=state.section;
+  if(s==='grammar') return `<div class="flash-answer"><div class="answer-label">Ý nghĩa</div><div class="flash-meaning">${esc(item.meaning||'Chưa có bản dịch trong file')}</div>${item.example?`<div class="example"><strong>Ví dụ:</strong> ${esc(item.example)}${item.translation?`<br>${esc(item.translation)}`:''}</div>`:''}</div>`;
+  if(s==='kanji') return `<div class="flash-answer"><div class="answer-label">Ý nghĩa</div><div class="flash-meaning">${esc(item.meaning||'')}</div><div class="example">${item.on?`<strong>Âm On:</strong> ${esc(item.on)}　`:''}${item.kun?`<strong>Âm Kun:</strong> ${esc(item.kun)}`:''}${item.related?`<br><strong>Từ liên quan:</strong> ${esc(item.related)}`:''}</div></div>`;
+  return `<div class="flash-answer"><div class="answer-label">Nghĩa tiếng Việt</div><div class="flash-meaning">${esc(item.meaning||'')}</div>${item.reading?`<div class="example"><strong>Cách đọc:</strong> ${esc(item.reading)}</div>`:''}</div>`;
+}
+function renderFlashcard(){
+  const items=getItems();
+  if(!items.length){$('#study-content').innerHTML=`<div class="empty"><strong>Chưa tìm thấy mục phù hợp</strong>Hãy đổi Unit hoặc từ khóa tìm kiếm để tiếp tục ôn tập.</div>`;return;}
+  if(state.index>=items.length)state.index=0;
+  if(state.index<0)state.index=items.length-1;
+  const item=items[state.index], mastered=state.mastered.has(item.id), progress=(state.index+1)/items.length*100;
+  const frontReading=state.section==='grammar'?'':(state.section==='kanji'?(state.showAnswer?`${item.on?'On: '+item.on:''}${item.kun?'　Kun: '+item.kun:''}`:''):(item.reading||''));
+  const hint=state.section==='grammar'?'Hãy tự giải thích cách dùng mẫu câu trước khi lật.':state.section==='kanji'?'Hãy nhớ nghĩa và âm đọc của chữ Hán.':'Thử nhớ nghĩa tiếng Việt trước khi lật thẻ.';
+  $('#study-content').innerHTML=`<div class="study-layout"><div class="flashcard-wrap"><article class="flashcard"><div class="flash-top"><span class="flash-label">${esc(SECTION_META[state.section].title)} · UNIT ${item.unit}</span><span class="flash-count">${String(state.index+1).padStart(2,'0')} / ${items.length}</span></div><div class="flash-main"><div class="flash-term">${esc(item.term)}</div>${frontReading?`<div class="flash-reading">${esc(frontReading)}</div>`:''}<div class="flash-hint">${state.showAnswer?'Mặt sau của thẻ':'↳ '+esc(hint)}</div>${state.showAnswer?detailHTML(item):''}</div><div class="flash-bottom"><div class="flash-progress"><div class="progress-track"><div class="progress-fill" style="width:${progress}%"></div></div><span class="flash-count">${Math.round(progress)}%</span></div><div class="flash-controls"><button class="btn small" id="prev-card" aria-label="Thẻ trước">← Trước</button><button class="btn small accent" id="flip-card">${state.showAnswer?'Ẩn đáp án':'Lật thẻ'}</button><button class="btn small" id="next-card">Tiếp →</button></div></div></article></div><aside class="side-panel"><div><div class="side-head">Tiến độ ghi nhớ</div><div class="side-sub">Đánh dấu những mục bạn đã thuộc để tự theo dõi trong phiên học này.</div></div><div class="mastery-number">${state.mastered.size}<small> / ${totalRecords()}</small></div><div class="mastery-track"><span style="width:${Math.min(100,state.mastered.size/totalRecords()*100)}%"></span></div><button class="btn ${mastered?'':'accent'}" id="mastered-btn">${mastered?'✓ Đã thuộc · Bỏ đánh dấu':'Đánh dấu đã thuộc ✓'}</button><button class="side-link" id="shuffle-cards">⤨ Xáo trộn thẻ</button></aside></div>`;
+}
+function renderList(){
+  const items=getItems();
+  $('#answer-toggle-label').textContent=state.showAnswer?'hiện':'ẩn';$('#toggle-list-answers').textContent=state.showAnswer?'Ẩn đáp án':'Hiện đáp án';
+  if(!items.length){$('#list-content').innerHTML=`<div class="empty" style="grid-column:1/-1"><strong>Không có kết quả</strong>Thử một từ khóa khác nhé.</div>`;return;}
+  $('#list-content').innerHTML=items.map(item=>{
+    let reading=item.reading;
+    if(state.section==='kanji')reading=[item.on?`On: ${item.on}`:'',item.kun?`Kun: ${item.kun}`:''].filter(Boolean).join(' · ');
+    const answer=state.showAnswer?esc(item.meaning||'Chưa có bản dịch trong file'):'Nhấn “Hiện đáp án” để tự kiểm tra';
+    const extra=state.showAnswer && state.section==='grammar' && item.example?`<div class="list-example"><strong>${esc(item.example)}</strong>${item.translation?`<br>${esc(item.translation)}`:''}</div>`:'';
+    const related=state.showAnswer && state.section==='kanji' && item.related?`<div class="list-example">Từ liên quan: ${esc(item.related)}</div>`:'';
+    return `<article class="list-item"><div class="list-top"><div><div class="list-term">${esc(item.term)}</div>${reading?`<div class="list-reading">${esc(reading)}</div>`:''}</div><span class="list-unit">U${item.unit}</span></div><div class="list-answer ${state.showAnswer?'':'hidden'}">${answer}</div>${extra}${related}</article>`;
+  }).join('');
+}
+function questionMeaning(item){return item.meaning||item.translation||item.related||'Chưa có bản dịch';}
+function initQuiz(){
+  let pool=getItems();
+  if(pool.length<2){state.quiz={items:[],index:0,score:0,answered:false,selected:-1,finished:true};return;}
+  pool=shuffle(pool).slice(0,Math.min(10,pool.length));
+  const source=getItems({ignoreSearch:true});
+  state.quiz={items:pool.map(item=>{
+    const answer=questionMeaning(item);
+    let distractors=shuffle(source.filter(x=>x.id!==item.id && questionMeaning(x) && questionMeaning(x)!==answer)).map(questionMeaning);
+    const options=[...new Set([answer,...distractors])].slice(0,4);
+    return {...item,answer,options:shuffle(options)};
+  }).filter(q=>q.options.length>=2),index:0,score:0,answered:false,selected:-1,finished:false};
+}
+function chooseQuizOption(index){const q=state.quiz.items[state.quiz.index];if(!q||state.quiz.answered)return;state.quiz.selected=index;state.quiz.answered=true;if(q.options[index]===q.answer)state.quiz.score++;renderQuiz();}
+function nextQuiz(){if(state.quiz.index>=state.quiz.items.length-1){state.quiz.finished=true;}else{state.quiz.index++;state.quiz.answered=false;state.quiz.selected=-1;}renderQuiz();}
+function renderQuiz(){
+  const qz=state.quiz;
+  if(!qz.items.length){$('#quiz-content').innerHTML=`<div class="empty"><strong>Chưa đủ dữ liệu để tạo câu hỏi</strong>Hãy chọn nhóm kiến thức có ít nhất hai mục.</div>`;return;}
+  if(qz.finished){const total=qz.items.length;const percent=Math.round(qz.score/total*100);const msg=percent>=80?'Rất tốt! Bạn đã nắm khá chắc phần này.':percent>=50?'Khá ổn. Hãy xem lại các câu sai rồi thử thêm lượt nữa.':'Đây là cơ hội tốt để nhận ra phần cần ôn thêm. Hãy quay lại thẻ ghi nhớ và thử lại.';$('#quiz-content').innerHTML=`<div class="quiz-result"><div class="quiz-kicker">Hoàn thành bài luyện</div><div class="result-score">${qz.score}<span style="font-size:.38em;color:var(--muted)"> / ${total}</span></div><p class="result-message">${esc(msg)}<br>Điểm: <strong>${percent}%</strong></p><button class="btn accent" id="retry-quiz">Luyện lại bộ câu hỏi ↻</button> <button class="btn" id="back-study">Quay lại ôn tập</button></div>`;return;}
+  const item=qz.items[qz.index];
+  const prompt=state.section==='grammar'?item.term:(state.section==='kanji'?item.term:item.term);
+  const hint=state.section==='grammar'?'Chọn ý nghĩa phù hợp của mẫu ngữ pháp.':state.section==='kanji'?'Chọn nghĩa tiếng Việt của chữ Kanji.':'Chọn nghĩa tiếng Việt phù hợp với từ này.';
+  $('#quiz-content').innerHTML=`<div class="quiz-top"><div class="quiz-kicker">Luyện nhanh · ${esc(SECTION_META[state.section].title)} · U${item.unit}</div><div class="quiz-progress-text">Câu ${qz.index+1} / ${qz.items.length} · Đúng ${qz.score}</div></div><div class="progress-track" style="margin-top:13px"><div class="progress-fill" style="width:${(qz.index+1)/qz.items.length*100}%"></div></div><div class="quiz-prompt">${esc(prompt)}</div>${state.section!=='grammar' && item.reading?`<div class="quiz-hint">${esc(item.reading)}</div>`:''}<div class="quiz-hint">${esc(hint)}</div><div class="quiz-options">${item.options.map((option,i)=>{let cls='quiz-option';if(qz.answered && option===item.answer)cls+=' correct';else if(qz.answered && i===qz.selected)cls+=' wrong';return `<button class="${cls}" data-option="${i}" ${qz.answered?'disabled':''}><span style="color:var(--muted);font-size:11px;margin-right:9px">${String.fromCharCode(65+i)}.</span>${esc(option)}</button>`;}).join('')}</div><div class="quiz-feedback ${qz.answered?(item.options[qz.selected]===item.answer?'good':'bad'):''}">${qz.answered?(item.options[qz.selected]===item.answer?'✓ Chính xác!':`Đáp án đúng: ${esc(item.answer)}`):'Chọn một đáp án để kiểm tra.'}</div><div class="quiz-actions"><button class="btn small ghost" id="restart-quiz">↻ Làm lại từ đầu</button><button class="btn accent" id="next-question" ${qz.answered?'':'disabled'}>${qz.index===qz.items.length-1?'Xem kết quả':'Câu tiếp theo →'}</button></div>`;
+}
+function renderAll(){renderHero();renderUnits();renderTabs();renderFilters();renderWorkspaceHeader();if(state.mode==='study')renderFlashcard();if(state.mode==='list')renderList();if(state.mode==='quiz')renderQuiz();}
+function scrollToWorkspace(){ $('#workspace').scrollIntoView({behavior:'smooth',block:'start'}); }
+document.addEventListener('click',e=>{
+  const sectionBtn=e.target.closest('[data-section]');if(sectionBtn){setSection(sectionBtn.dataset.section);return;}
+  const unitBtn=e.target.closest('[data-unit]');if(unitBtn){setUnit(unitBtn.dataset.unit);if(unitBtn.closest('#units-grid'))scrollToWorkspace();return;}
+  const modeBtn=e.target.closest('[data-mode]');if(modeBtn){setMode(modeBtn.dataset.mode);return;}
+  const id=e.target.closest('button')?.id;
+  if(id==='nav-units'){$('#units-section').scrollIntoView({behavior:'smooth'});}
+  if(id==='nav-study'||id==='start-study'){setMode('study');scrollToWorkspace();}
+  if(id==='nav-quiz'||id==='start-quiz'||id==='banner-quiz'){setMode('quiz');scrollToWorkspace();}
+  if(id==='all-units'){setUnit('all');$('#units-section').scrollIntoView({behavior:'smooth'});}
+  if(id==='flip-card'){state.showAnswer=!state.showAnswer;renderFlashcard();}
+  if(id==='prev-card'){state.index--;state.showAnswer=false;renderFlashcard();}
+  if(id==='next-card'){state.index++;state.showAnswer=false;renderFlashcard();}
+  if(id==='mastered-btn'){const item=getItems()[state.index];if(item){if(state.mastered.has(item.id)){state.mastered.delete(item.id);showToast('Đã bỏ đánh dấu mục này.');}else{state.mastered.add(item.id);showToast('Đã ghi nhận mục bạn thuộc!');}renderFlashcard();}}
+  if(id==='shuffle-cards'){state.index=0;const ids=getItems().map(i=>i.id);const shuffled=shuffle(ids);state._order=shuffled;const ordered=shuffled.map(k=>getItems().find(i=>i.id===k));state._shuffled=ordered;const previous=getItems;showToast('Đã xáo trộn thứ tự thẻ.');renderFlashcard();}
+  if(id==='toggle-list-answers'){state.showAnswer=!state.showAnswer;renderList();}
+  if(id==='retry-quiz'||id==='restart-quiz'){resetQuiz();initQuiz();renderQuiz();}
+  if(id==='next-question'){nextQuiz();}
+  if(id==='back-study'){setMode('study');}
+  const option=e.target.closest('[data-option]');if(option){chooseQuizOption(Number(option.dataset.option));}
+});
+$('#search').addEventListener('input',e=>{state.search=e.target.value;state.index=0;renderFilters();if(state.mode==='study')renderFlashcard();else if(state.mode==='list')renderList();else{resetQuiz();initQuiz();renderQuiz();}});
+// A shuffled order is applied locally to the study deck while preserving filters.
+const originalGetItems=getItems;
+getItems=function(opts={}){const result=originalGetItems(opts);if(!opts.ignoreSearch && state._shuffled && state.mode==='study' && opts.section===undefined && opts.unit===undefined){const rank=new Map(state._shuffled.map((x,i)=>[x.id,i]));return result.slice().sort((a,b)=>(rank.get(a.id)??99999)-(rank.get(b.id)??99999));}return result;};
+renderAll();
+</script>
+</body>
+</html>
